@@ -31,6 +31,8 @@ function App() {
   useEffect(() => {
       const cookies = JSON.parse(window.localStorage.getItem('isInstantPage'));
         if(cookies && (cookies.value === 1 || cookies.value === "1")) setChecked(true);
+
+        fetch('/api/add-liquid-tags');
   }, [])
 
     const handleMouseEnter = (number) => {
