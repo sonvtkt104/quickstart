@@ -2,6 +2,116 @@ import { Switch } from 'antd';
 import { useEffect, useState, useRef } from 'react';
 import ModalReviewBad from './components/ModalReviewBad';
 import React  from 'react';
+import ReactGA from "react-ga";
+
+const activitiesLog = page => {
+    const data = { page: page };
+    const token = document.querySelector('meta[name=csrf-token]').getAttribute('content');
+
+    fetch("/api/set-activities-log", {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json',
+            "X-CSRF-TOKEN": token,
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+};
+
+let GAInit = () => {
+    const shopPlan = document.querySelector('meta[name=shopPlan]').getAttribute('content');
+    const gaID = document.querySelector('meta[name=gaID]').getAttribute('content');
+    const gaIDFree = document.querySelector('meta[name=gaIDFree]').getAttribute('content');
+    const gaIDChargePro = document.querySelector('meta[name=gaIDChargePro]').getAttribute('content');
+    const gaIDChargeUnlimited = document.querySelector('meta[name=gaIDChargeUnlimited]').getAttribute('content');
+    const isCharge = document.querySelector('meta[name=isCharge]').getAttribute('content');
+    const planType = document.querySelector('meta[name=planType]').getAttribute('content');
+
+    try {
+        if (
+            ["affiliate", "partner_test", "staff_business"].includes(
+                shopPlan
+            )
+        ) {
+            return;
+        }
+
+        // var location = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+        ReactGA.initialize(
+            [
+                {
+                    trackingId: gaID,
+                    gaOptions: {
+                        name: "tracker1"
+                    }
+                },
+                {
+                    trackingId: gaIDFree,
+                    gaOptions: {
+                        name: "trackerFree"
+                    }
+                },
+                {
+                    trackingId: gaIDChargePro,
+                    gaOptions: {
+                        name: "trackerChargePro"
+                    }
+                },
+                {
+                    trackingId: gaIDChargeUnlimited,
+                    gaOptions: {
+                        name: "trackerChargeUnlimited"
+                    }
+                }
+            ],
+            { debug: false, alwaysSendToDefaultTracker: false }
+        );
+        if (isCharge === 'true') {
+            if (planType === "pro") {
+                ReactGA.pageview(window.location.pathname, [
+                    "tracker1",
+                    "trackerChargePro"
+                ]);
+                ReactGA.set({ page: window.location.pathname }, [
+                    "tracker1",
+                    "trackerChargePro"
+                ]);
+            } else {
+                ReactGA.pageview(window.location.pathname, [
+                    "tracker1",
+                    "trackerChargeUnlimited"
+                ]);
+                ReactGA.set({ page: window.location.pathname }, [
+                    "tracker1",
+                    "trackerChargeUnlimited"
+                ]);
+            }
+        } else {
+            ReactGA.pageview(window.location.pathname, [
+                "tracker1",
+                "trackerFree"
+            ]);
+            ReactGA.set({ page: window.location.pathname }, [
+                "tracker1",
+                "trackerFree"
+            ]);
+        }
+        // ReactGA.pageview(window.location.pathname, ["tracker1"]);
+        // ReactGA.pageview(window.location.pathname, ["trackerFree"]);
+        // ReactGA.pageview(window.location.pathname, ["trackerCharge"]);
+        // console.log("pageView  = ", window.location.pathname);
+        activitiesLog(window.location.pathname);
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 function App() {
   const [step, setStep] = useState(1);
@@ -33,6 +143,8 @@ function App() {
         if(cookies && (cookies.value === 1 || cookies.value === "1")) setChecked(true);
 
         fetch('/api/add-liquid-tags');
+
+        GAInit();
   }, [])
 
     const handleMouseEnter = (number) => {
