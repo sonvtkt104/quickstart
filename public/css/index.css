@@ -265,4 +265,20 @@ body {
     padding: 0 20px;
     text-align: center;
   }
+  .cool-fact {
+    padding: 0 !important;
+    margin: 40px 0 !important;
+  }
+  .evaluate p {
+    padding: 0 15px !important;
+  }
+  .quick-start-v2-step-content > div > img {
+    width: 100% !important;
+  }
+}
+
+@media screen and (min-width: 1700px) {
+  .cool-fact {
+    padding: 0px 16% !important;
+  }
 }

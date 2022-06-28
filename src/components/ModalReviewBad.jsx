@@ -44,10 +44,10 @@ export default function ModalReviewBad ({isShow}){
             } catch (e) {
                 console.log(e);
             }
-            window.open("/", '_self')
+            window.open("/your-seo-health", '_self')
         }}
         onCancel={() => {
-            window.open("/", '_self')
+            window.open("/your-seo-health", '_self')
         }}
     >
         <div>

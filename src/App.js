@@ -120,11 +120,20 @@ function App() {
   const [isShowFeedback, setIsShowFeedback] = useState(false);
   const [starCurrent, setStarCurrent] = useState(0);
   const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const domain = document.querySelector('meta[name=domain]').getAttribute('content');
   const shopName = document.querySelector('meta[name=shop-name]').getAttribute('content');
 
   const timeout = useRef();
+  const timeoutLoaded = useRef();
+
+  const timeoutLoading = () => {
+    timeoutLoaded.current = setTimeout(() => {
+        setLoading(false)
+        clearInterval(timeoutLoaded.current);
+    }, 3000)
+  }
 
   useEffect(() => {
     if(disabled) {
@@ -157,6 +166,10 @@ function App() {
 
 
     const handleEnabledInstancePage = (checked) => {
+        if(checked) {
+            setLoading(true);
+            timeoutLoading();
+        }
         let check = checked ? 1: 0;
         setDisabled(!checked);
         const data = { check };
@@ -200,13 +213,13 @@ function App() {
     }
 
     const handleOpenHomeAndChat = () => {
-        fetch(`https://www.google-analytics.com/collect?v=1&t=event&tid=UA-53113273-31&cid=e89af982-d7d8-415c-9bd0-b306d9b1ce53&ec=quick-start&ea=step-3-talk&ev=1&el=${shopName}`)
-        window.open("/?chat=open", '_self')
+        fetch(`https://www.google-analytics.com/collect?v=1&t=event&tid=UA-53113273-31&cid=e89af982-d7d8-415c-9bd0-b306d9b1ce53&ec=quick-start&ea=step-3-start&ev=1&el=${shopName}`)
+        window.open("/your-seo-health", '_self')
     }
 
     const handleOpenHome = () => {
         fetch(`https://www.google-analytics.com/collect?v=1&t=event&tid=UA-53113273-31&cid=e89af982-d7d8-415c-9bd0-b306d9b1ce53&ec=quick-start&ea=step-3-x&ev=1&el=${shopName}`)
-        window.open("/", '_self')
+        window.open("/your-seo-health", '_self')
     }
 
     const openFeedback = (star) => {
@@ -228,7 +241,7 @@ function App() {
         a.click();
         div.removeChild(a);
 
-        window.open("/", '_self')
+        window.open("/your-seo-health", '_self')
     }
 
 
@@ -286,7 +299,38 @@ function App() {
                                 <div style={{height: 80, marginTop: 20}}>
                                     {
                                         checked 
-                                        ? (<p style={{marginBottom: 20}}><span><img style={{width: 23, height: 23, marginRight: 7}} src='/images/keyword/party.png' alt="" /> Your store is now loading faster - There's no other setup needed</span></p>)
+                                        ? (
+                                        <p style={{marginBottom: 20}}>
+                                            {
+                                                loading
+                                                ? (
+                                                    <span style={{position: 'relative', padding: '9px 30px', display: 'inline'}}>
+                                                        <span style={{position: 'absolute', left: '10px', top: '-1px'}}>
+                                                            <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" x="0px"
+                                                                y="0px" width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40">
+                                                                <path opacity="0.2" fill="#44B3CF"
+                                                                    d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+                                                                s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+                                                                c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+                                                                <path fill="#44B3CF" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+                                                                C22.32,8.481,24.301,9.057,26.013,10.047z">
+                                                                    <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20" to="360 20 20"
+                                                                        dur="1s" repeatCount="indefinite" />
+                                                                </path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                )
+                                                : (
+                                                    <span>
+                                                        <img style={{width: 23, height: 23, marginRight: 7}} src='/images/keyword/party.png' alt="" /> 
+                                                        Your store is now loading faster - There's no other setup needed
+                                                    </span>
+                                                )
+                                            }
+                                        </p>
+                                        
+                                        )
                                         : (<></>)
                                     }
                                     <Switch 
@@ -299,10 +343,10 @@ function App() {
                                 <p style={{fontSize: 12, marginBottom: '20px'}}>*/ The tool helps pre-load links, not directly affecting pagespeed metrics.</p>
                                 <div>
                                     <button 
-                                        className={checked ? "active" : ""} 
+                                        className={checked && !loading ? "active" : ""} 
                                         onClick={
                                             e => {
-                                                if(checked) {
+                                                if(checked && !loading) {
                                                     setStep(2);
                                                     fetch(`https://www.google-analytics.com/collect?v=1&t=event&tid=UA-53113273-31&cid=e89af982-d7d8-415c-9bd0-b306d9b1ce53&ec=quick-start&ea=step-1-next&ev=1&el=${shopName}`)
                                                 }
@@ -323,7 +367,7 @@ function App() {
                                 <h3 style={{marginBottom: 0}}>Preview your store</h3>
                             </div>
                             <div className='quick-start-v2-step-content'>
-                                <p>Let’s click a couple of links on your store to see how faster your page is loading now: </p>
+                                <p>Let’s click a couple of links on your store to see how faster the page load time is getting: </p>
                                 <div style={{margin: '30px 0'}}>
                                     <a 
                                         onClick={() => {
@@ -333,8 +377,27 @@ function App() {
                                         target="_blank" 
                                         rel="noopener noreferrer"
                                     >
-                                        <img src='/images/keyword/eye-light.png' style={{width: '20px', height: '15px', marginRight: '5px', marginBottom: 3}} alt="eye" /> Preview your store and Come back
+                                        <img src='/images/keyword/eye-light.png' style={{width: '20px', height: '15px', marginRight: '5px', marginBottom: 3}} alt="eye" /> Go to your store and try some clicks
                                     </a>
+                                </div>
+                                <div 
+                                    className="cool-fact"
+                                    style={{
+                                    margin: "40px 0 120px 0",
+                                    padding: '0 11%'
+                                }}>
+                                    <div style={{
+                                        backgroundColor: 'rgba(217, 217, 217, 0.3)',
+                                        borderRadius: '6px',
+                                        borderLeft: '5px solid #3F3D56',
+                                        padding: '12px 15px',
+                                        textAlign: 'left',
+                                    }}>
+                                        <p style={{lineHeight: "21px"}}>*Cool Fact: Cutting 100 milliseconds of latency would improve sales by 1%</p>
+                                        <p style={{lineHeight: "21px"}}>That's why Instant page is trusted and applied in many websites of big companies including Amazon, Rakuten, Spotify... and your own website now
+                                            <img src='/images/keyword/react.png' style={{width: "21px", height: "21px", marginLeft: "5px"}} alt="nice"/>
+                                        </p>
+                                    </div>
                                 </div>
                                 <div>
                                     <button className="active" onClick={ e => {
@@ -347,31 +410,23 @@ function App() {
                     )
                     : (
                         <>
-                            <div className="step3" style={{marginBottom: 35}}>
+                            <div className="step3" style={{marginBottom: 25}}>
                                 <div className='quick-start-v2-header'>
-                                    <h3 style={{marginBottom: 0}}>COMPLETE! INSTANT PAGE IS YOURS!</h3>
+                                    <h3 style={{marginBottom: 0}}>COMING UP NEXT!</h3>
                                 </div>
-                                <div className='quick-start-v2-step-content'>
-                                    <p>Amazon found that cutting 100 milliseconds of latency would improve sales by 1%. </p>
-                                    <p>That's why Instant page is trusted and applied in many websites of big companies including Amazon, Rakuten, Spotify... and your own website now <img src='/images/keyword/react.png' alt="react" style={{width: 16, height: 18, marginLeft: 5}}/></p>
-                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                        <div style={{flexBasis: '30%', marginTop: 20}}>
-                                            <p>Have a question?</p>
-                                            <button onClick={handleOpenHomeAndChat} style={{padding: '7px 30px', color: 'white', backgroundColor: '#58CA8C', cursor: 'pointer', marginBottom: 10}}>TALK TO US</button>
-                                            <div>
-                                                <a onClick={() => {
-                                                    fetch(`https://www.google-analytics.com/collect?v=1&t=event&tid=UA-53113273-31&cid=e89af982-d7d8-415c-9bd0-b306d9b1ce53&ec=quick-start&ea=step-3-skip&ev=1&el=${shopName}`)
-                                                }} style={{color: '#44B3CF', textDecoration: 'underline'}} href="/">Skip</a>
-                                            </div>
-                                        </div>
-                                        <div style={{flexBasis: '55%'}}>
-                                            <img style={{width: '100%'}} src='/images/keyword/finish.png' alt="finish" />
-                                        </div>
+                                <div className='quick-start-v2-step-content' style={{textAlign: 'center', padding: '25px 20px 30px 20px'}}>
+                                    <p>You will learn about what should be improved on your store to be more competitive on search engines.</p>
+                                    <p style={{fontSize: '13px', fontStyle: 'italic', marginTop: '15px', marginBottom: '6px'}}>*Tip: Be patient with SEO. It takes time to master but pay off forever.</p>
+                                    <div>
+                                        <img style={{width: '50%'}} src='/images/keyword/social.png' alt="social"></img>
+                                    </div>
+                                    <div>
+                                        <button onClick={handleOpenHomeAndChat} style={{fontWeight: '600', fontSize: '14px' ,padding: '7px 30px', color: 'white', backgroundColor: '#58CA8C', cursor: 'pointer', marginBottom: 10}}>START NOW</button>
                                     </div>
                                 </div>
                             </div>
                             <div  className="evaluate">
-                                <p style={{marginBottom: 0, fontWeight: '600', paddingTop: 3, marginRight: 30}}>How’s your experience with us so far?</p>
+                                <p style={{marginBottom: 0, fontWeight: '600', paddingTop: 3, marginRight: 30}}>How’s your experience with SEO Booster so far?</p>
                                 <div style={{height: '23px'}} onMouseLeave={handleMouseLeave}>
                                     <svg onClick={(e) => openFeedback(1)} onMouseEnter={e => handleMouseEnter(1)} width="24" height="23" viewBox="0 0 24 23" fill={star >= 1 ? "#FFB721" : "none"} xmlns="http://www.w3.org/2000/svg">
                                         <path d="M22.9183 8.6051C22.8511 8.39706 22.7241 8.2134 22.5532 8.07701C22.3823 7.94062 22.1751 7.85754 21.9573 7.8381L15.8963 7.2881L13.4963 1.6781C13.4105 1.47692 13.2674 1.30539 13.0849 1.18483C12.9024 1.06427 12.6885 1 12.4698 1C12.2511 1 12.0372 1.06427 11.8547 1.18483C11.6722 1.30539 11.5291 1.47692 11.4433 1.6781L9.04329 7.2871L2.98129 7.8371C2.76493 7.85888 2.55963 7.94333 2.39057 8.0801C2.22152 8.21688 2.09606 8.40002 2.02959 8.60707C1.96313 8.81411 1.95854 9.03606 2.01639 9.24567C2.07425 9.45529 2.19203 9.64346 2.35529 9.7871L6.93729 13.8051L5.58629 19.7551C5.53682 19.9683 5.55127 20.1914 5.62781 20.3964C5.70436 20.6015 5.83962 20.7795 6.0167 20.9081C6.19378 21.0368 6.40484 21.1104 6.62351 21.1198C6.84219 21.1292 7.0588 21.074 7.24629 20.9611L12.4743 17.8361L17.7003 20.9611C17.8879 21.0734 18.1044 21.128 18.3228 21.1183C18.5413 21.1086 18.752 21.0349 18.929 20.9065C19.1059 20.778 19.2412 20.6004 19.318 20.3957C19.3949 20.191 19.4099 19.9683 19.3613 19.7551L18.0103 13.8051L22.5913 9.7881C22.7553 9.64437 22.8737 9.45576 22.9318 9.24554C22.9899 9.03532 22.9852 8.81268 22.9183 8.6051V8.6051Z" stroke="#FFB721" stroke-width="2"/>
