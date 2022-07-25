@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="jwt-token" content="@php echo (!empty($_GET['token'])?$_GET['token']:''); @endphp">
     <meta name="domain" content="{{ $domain }}">
     <meta name="shop-name" content="{{$shopName}}">
     <meta name="shopPlan" content="{{$shopPlan}}">

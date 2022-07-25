@@ -38,16 +38,38 @@ export default function ModalReviewBad ({isShow}){
                   value: new Date().toDateString()
                 };
 
-                fetch(`${url}${encodeQueryString(parameters)}`)
-                fetch(`${url}${encodeQueryString(parameters1)}`)
-                fetch(`${url}${encodeQueryString(parameters2)}`)
+                fetch(`${url}${encodeQueryString(parameters)}`, {
+                    headers: {
+                        'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+                    },
+                })
+                fetch(`${url}${encodeQueryString(parameters1)}`, {
+                    headers: {
+                        'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+                    },
+                })
+                fetch(`${url}${encodeQueryString(parameters2)}`, {
+                    headers: {
+                        'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+                    },
+                })
             } catch (e) {
                 console.log(e);
             }
-            window.open("/your-seo-health", '_self')
+            // window.open("/your-seo-health", '_self')
+            fetch('/quick-start-redirect', {
+                headers: {
+                    'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+                },
+            });
         }}
         onCancel={() => {
-            window.open("/your-seo-health", '_self')
+            // window.open("/your-seo-health", '_self')
+            fetch('/quick-start-redirect', {
+                headers: {
+                    'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+                },
+            });
         }}
     >
         <div>

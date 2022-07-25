@@ -13,6 +13,7 @@ const activitiesLog = page => {
         headers: {
             'Content-Type': 'application/json',
             "X-CSRF-TOKEN": token,
+            'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
         },
         body: JSON.stringify(data),
     })
@@ -151,7 +152,11 @@ function App() {
       const cookies = JSON.parse(window.localStorage.getItem('isInstantPage'));
         if(cookies && (cookies.value === 1 || cookies.value === "1")) setChecked(true);
 
-        fetch('/api/add-liquid-tags');
+        fetch('/api/add-liquid-tags', {
+            headers: {
+                'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+            },
+        });
 
         GAInit();
   }, [])
@@ -179,6 +184,7 @@ function App() {
             headers: {
                 'Content-Type': 'application/json',
                 "X-CSRF-TOKEN": token,
+                'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
             },
             body: JSON.stringify(data),
         })
@@ -214,12 +220,22 @@ function App() {
 
     const handleOpenHomeAndChat = () => {
         fetch(`https://www.google-analytics.com/collect?v=1&t=event&tid=UA-53113273-31&cid=e89af982-d7d8-415c-9bd0-b306d9b1ce53&ec=quick-start&ea=step-3-start&ev=1&el=${shopName}`)
-        window.open("/your-seo-health", '_self')
+        // window.open("/your-seo-health", '_self')
+        fetch('/quick-start-redirect', {
+            headers: {
+                'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+            },
+        });
     }
 
     const handleOpenHome = () => {
         fetch(`https://www.google-analytics.com/collect?v=1&t=event&tid=UA-53113273-31&cid=e89af982-d7d8-415c-9bd0-b306d9b1ce53&ec=quick-start&ea=step-3-x&ev=1&el=${shopName}`)
-        window.open("/your-seo-health", '_self')
+        // window.open("/your-seo-health", '_self')
+        fetch('/quick-start-redirect', {
+            headers: {
+                'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+            },
+        });
     }
 
     const openFeedback = (star) => {
@@ -241,7 +257,12 @@ function App() {
         a.click();
         div.removeChild(a);
 
-        window.open("/your-seo-health", '_self')
+        // window.open("/your-seo-health", '_self')
+        fetch('/quick-start-redirect', {
+            headers: {
+                'Authorization': (document.getElementsByTagName("meta")["jwt-token"]?document.getElementsByTagName("meta")["jwt-token"].getAttribute("content"):'')
+            },
+        });
     }
 
 
